@@ -36,7 +36,7 @@
 <script>
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { formatTimestampToDate } from "../api/common";
+import { convertTimestampToDate } from "../api/common";
 import { deleteAcceptance } from "../api";
 
 export default {
@@ -48,11 +48,14 @@ export default {
     const router = useRouter();
 
     const viewAcceptanceDetails = (acceptance) => {
-      router.push({ name: "detail contract", params: { id: acceptance.id } });
+      router.push({ path: "/acceptances", params: { id: acceptance.id } });
     };
 
     const updateAcceptance = (acceptance) => {
-      router.push({ name: "update contract", params: { id: acceptance.id } });
+      router.push({
+        path: "/acceptances/update",
+        params: { id: acceptance.id },
+      });
     };
 
     const handleDeleteAcceptance = async (acceptanceId) => {
@@ -67,7 +70,7 @@ export default {
     };
 
     const formatTimeStamp = (timestamp) => {
-      return formatTimestampToDate(timestamp);
+      return convertTimestampToDate(timestamp);
     };
 
     watch(
