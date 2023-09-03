@@ -67,7 +67,7 @@
     </div>
     <div>
       <button type="submit">
-        {{ isEditing ? "Update User" : "Create User" }}
+        {{ isEditing ? "Update Acceptance" : "Create Acceptance" }}
       </button>
     </div>
   </form>

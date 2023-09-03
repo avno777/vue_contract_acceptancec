@@ -43,7 +43,7 @@ export default {
   props: {
     contracts: Array,
   },
-  setup(props, { emit }) {
+  setup(props) {
     const contracts = ref(props.contracts);
     const router = useRouter();
 

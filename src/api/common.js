@@ -21,3 +21,12 @@ export const convertTimestampToDate = (timestamp) => {
   const formattedDate = `${month},${day},${year}`;
   return formattedDate;
 };
+
+export const convertDateToTimestamp = (dateString) => {
+  const timestamp = Date.parse(dateString);
+  if (!isNaN(timestamp)) {
+    return Math.floor(timestamp / 1000);
+  } else {
+    return null;
+  }
+};

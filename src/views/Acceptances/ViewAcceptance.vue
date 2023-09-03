@@ -1,14 +1,50 @@
 <template>
   <div>
     <h1>AcceptanceList List</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Contract</th>
+          <th>Acceptance Name</th>
+          <th>Acceptance Amount</th>
+          <th>Volume</th>
+          <th>Status</th>
+          <th>Acceptance Date</th>
+          <th>Description</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="acceptance in acceptances" :key="acceptance.id">
+          <td>{{ acceptance.id }}</td>
+          <td>{{ acceptance.contract_id }}</td>
+          <td>{{ acceptance.acceptance_name }}</td>
+          <td>{{ acceptance.acceptance_amount }}</td>
+          <td>{{ acceptance.volume }}</td>
+          <td>{{ acceptance.status }}</td>
+          <td>{{ formatTimeStamp(acceptance.acceptance_date) }}</td>
+          <td>{{ acceptance.description }}</td>
+          <td>
+            <button @click="viewAcceptanceDetails(acceptance)">View</button>
+            <button @click="updateAcceptance(acceptance)">Edit</button>
+            <button @click="handleDeleteAcceptance(acceptance.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     <AcceptanceList :acceptances="acceptances" />
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
-import { getAllAcceptances } from "../../api";
+import { getAllAcceptances, deleteAcceptance } from "../../api";
 import AcceptanceList from "../../components/AcceptanceList.vue";
+import { useRouter } from "vue-router";
+import { convertTimestampToDate } from "../../api/common";
 
 export default {
   components: {
@@ -16,20 +52,53 @@ export default {
   },
   setup() {
     const acceptances = ref([]);
+    const router = useRouter();
 
     const fetchAcceptances = async () => {
       try {
         const response = await getAllAcceptances();
         console.log("respond data", response);
-        acceptances.value = response.data;
+        acceptances.value = response;
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
 
+    const viewAcceptanceDetails = (acceptance) => {
+      router.push({ path: "/acceptances", params: { id: acceptance.id } });
+    };
+
+    const updateAcceptance = (acceptance) => {
+      router.push({
+        path: "/acceptances/update",
+        params: { id: acceptance.id },
+      });
+    };
+
+    const handleDeleteAcceptance = async (acceptanceId) => {
+      try {
+        await deleteAcceptance(acceptanceId);
+        acceptances.value = acceptances.value.filter(
+          (acceptance) => acceptance.id !== acceptanceId
+        );
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      }
+    };
+
+    const formatTimeStamp = (timestamp) => {
+      return convertTimestampToDate(timestamp);
+    };
+
     onMounted(fetchAcceptances);
 
-    return { acceptances };
+    return {
+      acceptances,
+      viewAcceptanceDetails,
+      updateAcceptance,
+      handleDeleteAcceptance,
+      formatTimeStamp,
+    };
   },
 };
 </script>

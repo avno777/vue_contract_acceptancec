@@ -1,16 +1,16 @@
-// api.js
 import axios from "axios";
 
-const baseUrl =
+const baseURL =
   "https://64f0e8678a8b66ecf77a3df9.mockapi.io/api/list_contract/";
 
 const axiosInstance = axios.create({
-  baseUrl,
+  baseURL,
 });
 
 export const getAllContracts = async () => {
   try {
-    const response = await axiosInstance.get("/contract/");
+    const response = await axiosInstance.get("/contract");
+    console.log("contracts data api", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching Contracts:", error);
@@ -20,8 +20,25 @@ export const getAllContracts = async () => {
 
 export const createContract = async (contractData) => {
   try {
-    const response = await axiosInstance.post("/contract", contractData);
-    return response.data;
+    const {
+      contract_number,
+      contract_name,
+      sign_date,
+      contract_value,
+      customer_id,
+      status,
+      description,
+    } = contractData;
+    const response = await axiosInstance.post("/contract", {
+      contract_number,
+      contract_name,
+      sign_date,
+      contract_value,
+      customer_id,
+      status,
+      description,
+    });
+    return response;
   } catch (error) {
     console.error("Error creating Contract:", error);
     throw error;
@@ -30,10 +47,24 @@ export const createContract = async (contractData) => {
 
 export const updateContract = async (contractId, contractData) => {
   try {
-    const response = await axiosInstance.put(
-      `/contract/${contractId}`,
-      contractData
-    );
+    const {
+      contract_number,
+      contract_name,
+      sign_date,
+      contract_value,
+      customer_id,
+      status,
+      description,
+    } = contractData;
+    const response = await axiosInstance.put(`/contract/${contractId}`, {
+      contract_number,
+      contract_name,
+      sign_date,
+      contract_value,
+      customer_id,
+      status,
+      description,
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating Contract:", error);
@@ -110,25 +141,4 @@ export const getAcceptance = async (acceptanceId) => {
     console.error("Error fetching Acceptance by ID:", error);
     throw error;
   }
-};
-
-export const getAllAcceptances = () => {
-  return axios.get(`${apiUrl}/acceptance`);
-};
-
-export const getAcceptance = () => {
-  return axios.get(`${apiUrl}/acceptance/${acceptanceId}`);
-};
-
-export const createAcceptance = (acceptance) => {
-  return axios.post(`${apiUrl}/acceptance`, acceptance);
-};
-
-export const updateAcceptance = (acceptance) => {
-  const acceptanceId = acceptance.id;
-  return axios.put(`${apiUrl}/contract/${acceptanceId}`, acceptance);
-};
-
-export const deleteAcceptance = (acceptanceId) => {
-  return axios.delete(`${apiUrl}/acceptance/${acceptanceId}`);
 };

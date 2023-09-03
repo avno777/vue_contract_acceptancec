@@ -43,7 +43,7 @@ export default {
   props: {
     acceptances: Array,
   },
-  setup(props, { emit }) {
+  setup(props) {
     const acceptances = ref(props.acceptances);
     const router = useRouter();
 

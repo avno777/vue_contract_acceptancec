@@ -5,7 +5,7 @@
       <input
         type="text"
         id="contract_number"
-        v-model="formContractData.contract_number"
+        v-model="formData.contract_number"
         required
       />
     </div>
@@ -14,60 +14,45 @@
       <input
         type="text"
         id="contract_name"
-        v-model="formContractData.contract_name"
+        v-model="formData.contract_name"
         required
       />
     </div>
     <div>
       <label for="birthday">Sign Date:</label>
-      <input
-        type="date"
-        id="birthday"
-        v-model="formContractData.sign_date"
-        required
-      />
+      <input type="date" id="birthday" v-model="formData.sign_date" required />
     </div>
     <div>
       <label for="gender">Contract Value:</label>
       <input
         type="text"
         id="gender"
-        v-model="formContractData.contract_value"
+        v-model="formData.contract_value"
         required
       />
     </div>
     <div>
       <label for="gender">Customer:</label>
-      <input
-        type="text"
-        id="gender"
-        v-model="formContractData.customer_id"
-        required
-      />
+      <input type="text" id="gender" v-model="formData.customer_id" required />
     </div>
     <div>
       <label for="gender">Status:</label>
-      <input
-        type="text"
-        id="gender"
-        v-model="formContractData.status"
-        required
-      />
+      <input type="text" id="gender" v-model="formData.status" required />
     </div>
     <div>
-      <label for="gender">Description:</label>
+      <label for="description">Description:</label>
       <textarea
         name="description"
         id="description"
         cols="30"
         rows="10"
-        v-model="formContractData.description"
+        v-model="formData.description"
         required
       ></textarea>
     </div>
     <div>
       <button type="submit">
-        {{ isEditing ? "Update User" : "Create User" }}
+        {{ isEditing ? "Update Contract" : "Create Contract" }}
       </button>
     </div>
   </form>
@@ -84,7 +69,7 @@ export default {
   },
   emits: ["submit"],
   setup(props, { emit }) {
-    const formContractData = reactive({
+    const formData = reactive({
       contract_number: "",
       contract_name: "",
       sign_date: "",
@@ -95,21 +80,23 @@ export default {
     });
 
     if (props.isEditing) {
-      formContractData.contract_number = props.contract.contract_number;
-      formContractData.contract_name = props.contract.contract_name;
-      formContractData.sign_date = props.contract.sign_date;
-      formContractData.contract_value = props.contract.contract_value;
-      formContractData.customer_id = props.contract.customer_id;
-      formContractData.status = props.contract.status;
-      formContractData.description = props.contract.description;
+      console.log("before", props.contract);
+      formData.contract_number = props.contract.contract_number;
+      formData.contract_name = props.contract.contract_name;
+      formData.sign_date = props.contract.sign_date;
+      formData.contract_value = props.contract.contract_value;
+      formData.customer_id = props.contract.customer_id;
+      formData.status = props.contract.status;
+      formData.description = props.contract.description;
     }
+    console.log("after", formData);
 
     const handleSubmit = async () => {
       try {
         if (props.isEditing) {
-          await updateContract(props.contract.id, formContractData);
+          await updateContract(props.contract.id, formData);
         } else {
-          await createContract(formContractData);
+          await createContract(formData);
         }
         emit("submit"); // Emit the submit event to notify the parent component
       } catch (error) {
@@ -118,7 +105,7 @@ export default {
     };
 
     return {
-      formContractData,
+      formData,
       handleSubmit,
     };
   },
