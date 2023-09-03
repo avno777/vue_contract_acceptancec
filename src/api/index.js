@@ -29,15 +29,7 @@ export const createContract = async (contractData) => {
       status,
       description,
     } = contractData;
-    const response = await axiosInstance.post("/contract", {
-      contract_number,
-      contract_name,
-      sign_date,
-      contract_value,
-      customer_id,
-      status,
-      description,
-    });
+    const response = await axiosInstance.post("/contract", contractData);
     return response;
   } catch (error) {
     console.error("Error creating Contract:", error);
@@ -47,6 +39,7 @@ export const createContract = async (contractData) => {
 
 export const updateContract = async (contractId, contractData) => {
   try {
+    const { id } = contractId;
     const {
       contract_number,
       contract_name,
@@ -56,15 +49,10 @@ export const updateContract = async (contractId, contractData) => {
       status,
       description,
     } = contractData;
-    const response = await axiosInstance.put(`/contract/${contractId}`, {
-      contract_number,
-      contract_name,
-      sign_date,
-      contract_value,
-      customer_id,
-      status,
-      description,
-    });
+    const response = await axiosInstance.put(
+      `/contract/${contractId}`,
+      contractData
+    );
     return response.data;
   } catch (error) {
     console.error("Error updating Contract:", error);
@@ -103,6 +91,15 @@ export const getAllAcceptances = async () => {
 
 export const createAcceptance = async (acceptanceData) => {
   try {
+    const {
+      contract_id,
+      acceptance_name,
+      acceptance_amount,
+      volume,
+      status,
+      acceptance_date,
+      description,
+    } = acceptanceData;
     const response = await axiosInstance.post("/acceptance", acceptanceData);
     return response.data;
   } catch (error) {
@@ -113,6 +110,16 @@ export const createAcceptance = async (acceptanceData) => {
 
 export const updateAcceptance = async (acceptanceId, acceptanceData) => {
   try {
+    const { id } = acceptanceId;
+    const {
+      contract_id,
+      acceptance_name,
+      acceptance_amount,
+      volume,
+      status,
+      acceptance_date,
+      description,
+    } = acceptanceData;
     const response = await axiosInstance.put(
       `/acceptance/${acceptanceId}`,
       acceptanceData

@@ -30,3 +30,11 @@ export const convertDateToTimestamp = (dateString) => {
     return null;
   }
 };
+
+export function required(value) {
+  return !!value;
+}
+
+export function isNumber(value) {
+  return !isNaN(value);
+}

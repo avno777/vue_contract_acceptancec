@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Edit User</h1>
+    <h1>Edit Contract</h1>
 
     <form @submit.prevent="handleUpdateContract">
       <div>
@@ -9,8 +9,17 @@
           type="text"
           id="contract_number"
           v-model="formData.contract_number"
+          :class="{
+            invalid: !isFieldValid(formData.contract_number, [required]),
+          }"
           required
         />
+        <span
+          class="error-message"
+          v-if="!isFieldValid(formData.contract_number, [required])"
+        >
+          Please enter a valid contract number.
+        </span>
       </div>
       <div>
         <label for="contract_name">Contract Name:</label>
@@ -18,39 +27,88 @@
           type="text"
           id="contract_name"
           v-model="formData.contract_name"
+          :class="{
+            invalid: !isFieldValid(formData.contract_name, [required]),
+          }"
           required
         />
+        <span
+          class="error-message"
+          v-if="!isFieldValid(formData.contract_name, [required])"
+        >
+          Please enter a contract name.
+        </span>
       </div>
       <div>
-        <label for="birthday">Sign Date:</label>
+        <label for="sign_date">Sign Date:</label>
         <input
           type="date"
-          id="birthday"
+          id="sign_date"
           v-model="formData.sign_date"
+          :class="{ invalid: !isFieldValid(formData.sign_date, [required]) }"
           required
         />
+        <span
+          class="error-message"
+          v-if="!isFieldValid(formData.sign_date, [required])"
+        >
+          Please select a sign date.
+        </span>
       </div>
       <div>
-        <label for="gender">Contract Value:</label>
+        <label for="contract_value">Contract Value:</label>
         <input
-          type="text"
-          id="gender"
+          type="number"
+          id="contract_value"
           v-model="formData.contract_value"
+          :class="{
+            invalid: !isFieldValid(formData.contract_value, [
+              required,
+              isNumber,
+            ]),
+          }"
           required
         />
+        <span
+          class="error-message"
+          v-if="!isFieldValid(formData.contract_value, [required, isNumber])"
+        >
+          Please enter a valid contract value.
+        </span>
       </div>
       <div>
-        <label for="gender">Customer:</label>
+        <label for="customer_id">Customer:</label>
         <input
           type="text"
-          id="gender"
+          id="customer_id"
           v-model="formData.customer_id"
+          :class="{ invalid: !isFieldValid(formData.customer_id, [required]) }"
           required
         />
+        <span
+          class="error-message"
+          v-if="!isFieldValid(formData.customer_id, [required])"
+        >
+          Please enter a customer ID.
+        </span>
       </div>
       <div>
-        <label for="gender">Status:</label>
-        <input type="text" id="gender" v-model="formData.status" required />
+        <label for="status">Status:</label>
+        <input
+          type="number"
+          id="status"
+          v-model="formData.status"
+          :class="{
+            invalid: !isFieldValid(formData.status, [required, isNumber]),
+          }"
+          required
+        />
+        <span
+          class="error-message"
+          v-if="!isFieldValid(formData.status, [required, isNumber])"
+        >
+          Please enter a status.
+        </span>
       </div>
       <div>
         <label for="description">Description:</label>
@@ -60,17 +118,19 @@
           cols="30"
           rows="10"
           v-model="formData.description"
+          :class="{ invalid: !isFieldValid(formData.description, [required]) }"
           required
         ></textarea>
+        <span
+          class="error-message"
+          v-if="!isFieldValid(formData.description, [required])"
+        >
+          Please enter a description.
+        </span>
       </div>
 
       <button type="submit">Update Contract</button>
     </form>
-    <!-- <ContractForm
-      :isEditing="true"
-      :contract="formContractData"
-      @submit="handleUpdateContract"
-    /> -->
     <RouterLink to="/contracts">Back to Contracts List</RouterLink>
   </div>
 </template>
@@ -79,7 +139,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getContract, updateContract } from "../../api";
-import { convertDateToTimestamp } from "../../api/common";
+import { convertDateToTimestamp, required, isNumber } from "../../api/common";
 
 export default {
   components: {
@@ -98,6 +158,15 @@ export default {
     const router = useRouter();
     const contractId = router.currentRoute.value.params.id;
 
+    const isFieldValid = (value, validators) => {
+      for (const validator of validators) {
+        if (!validator(value)) {
+          return false;
+        }
+      }
+      return true;
+    };
+
     const fetchContractData = async () => {
       try {
         if (contractId) {
@@ -114,19 +183,29 @@ export default {
     };
 
     const handleUpdateContract = async () => {
-      try {
-        if (contractId) {
-          formData.value.sign_date = convertDateToTimestamp(
-            formData.value.sign_date
-          );
-          const response = await updateContract(contractId, formData.value);
-          console.log("response", response);
-          if (response) {
-            router.push({ path: "/contracts" });
+      if (
+        isFieldValid(formData.contract_number, [required, isNumber]) &&
+        isFieldValid(formData.contract_name, [required]) &&
+        isFieldValid(formData.sign_date, [required]) &&
+        isFieldValid(formData.contract_value, [required, isNumber]) &&
+        isFieldValid(formData.customer_id, [required]) &&
+        isFieldValid(formData.status, [required]) &&
+        isFieldValid(formData.description, [required])
+      ) {
+        try {
+          if (contractId) {
+            formData.value.sign_date = convertDateToTimestamp(
+              formData.value.sign_date
+            );
+            const response = await updateContract(contractId, formData.value);
+            console.log("response", response);
+            if (response) {
+              router.push({ path: "/contracts" });
+            }
           }
+        } catch (error) {
+          console.error("API error:", error);
         }
-      } catch (error) {
-        console.error("API error:", error);
       }
     };
 
@@ -141,3 +220,12 @@ export default {
   },
 };
 </script>
+<style>
+.invalid {
+  border: 1px solid red;
+}
+
+.error-message {
+  color: red;
+}
+</style>
