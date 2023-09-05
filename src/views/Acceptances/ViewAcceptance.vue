@@ -1,6 +1,13 @@
 <template>
   <div>
     <h1>AcceptanceList List</h1>
+    <input
+      v-model="searchKeyword"
+      placeholder="Search by keyword"
+      @input="searchAcceptances"
+    />
+    <RouterLink to="/acceptances/new">Create New Acceptance</RouterLink>
+
     <table border="{1}">
       <thead>
         <tr>
@@ -45,18 +52,25 @@
 <script>
 import { ref, onMounted } from "vue";
 import { getAllAcceptances, deleteAcceptance } from "../../api";
-import AcceptanceList from "../../components/AcceptanceList.vue";
+
 import { useRouter } from "vue-router";
 import { convertTimestampToDate } from "../../api/common";
 
 export default {
   components: {
-    AcceptanceList,
+    // AcceptanceList,
   },
   setup() {
     const acceptances = ref([]);
     const router = useRouter();
+    const searchKeyword = ref("");
     const loadingTable = ref(false);
+
+    const searchAcceptances = () => {
+      setTimeout(fetchAcceptances, 1000);
+    };
+
+    watch(searchKeyword, searchAcceptances);
 
     const fetchAcceptances = async () => {
       loadingTable.value = true;
@@ -105,6 +119,8 @@ export default {
       updateAcceptance,
       handleDeleteAcceptance,
       formatTimeStamp,
+      searchKeyword,
+      searchAcceptances,
     };
   },
 };

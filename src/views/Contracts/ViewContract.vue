@@ -23,6 +23,9 @@
         </tr>
       </thead>
       <tbody>
+        <tr v-if="loadingTable">
+          <td colspan="9">Loading</td>
+        </tr>
         <tr v-for="contract in contracts" :key="contract.id">
           <td>{{ contract.id }}</td>
           <td>{{ contract.contract_number }}</td>
@@ -58,6 +61,7 @@ export default {
     const contracts = ref([]);
     const searchKeyword = ref("");
     const router = useRouter();
+    const loadingTable = ref(false);
 
     const searchContracts = () => {
       setTimeout(fetchContracts, 1000);
@@ -66,6 +70,7 @@ export default {
     watch(searchKeyword, searchContracts);
 
     const fetchContracts = async () => {
+      loadingTable.value = true;
       try {
         const response = await getAllContracts(searchKeyword.value);
         console.log("keyword", searchKeyword.value);
@@ -105,6 +110,7 @@ export default {
 
     return {
       contracts,
+      loadingTable,
       viewContractDetails,
       updateContract,
       handleDeleteContract,
