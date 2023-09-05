@@ -5,11 +5,17 @@ const baseURL =
 
 const axiosInstance = axios.create({
   baseURL,
+  headers: {
+    "Content-type": "application/json",
+  },
 });
 
-export const getAllContracts = async () => {
+export const getAllContracts = async (keyword) => {
+  const params = { search: keyword };
   try {
-    const response = await axiosInstance.get("/contract");
+    const response = await axiosInstance.get("/contract", {
+      params: params,
+    });
     console.log("contracts data api", response.data);
     return response.data;
   } catch (error) {
@@ -79,9 +85,12 @@ export const getContract = async (contractId) => {
   }
 };
 
-export const getAllAcceptances = async () => {
+export const getAllAcceptances = async (keyword) => {
+  const params = { search: keyword };
   try {
-    const response = await axiosInstance.get("/acceptance/");
+    const response = await axiosInstance.get("/acceptance/", {
+      params: params,
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching Acceptances:", error);

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>AcceptanceList List</h1>
-    <table>
+    <table border="{1}">
       <thead>
         <tr>
           <th>ID</th>
@@ -16,7 +16,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="acceptance in acceptances" :key="acceptance.id">
+        <tr v-if="loadingTable">
+          <td colspan="9">Loading</td>
+        </tr>
+        <tr v-else v-for="acceptance in acceptances" :key="acceptance.id">
           <td>{{ acceptance.id }}</td>
           <td>{{ acceptance.contract_id }}</td>
           <td>{{ acceptance.acceptance_name }}</td>
@@ -35,7 +38,7 @@
         </tr>
       </tbody>
     </table>
-    <AcceptanceList :acceptances="acceptances" />
+    <!-- <AcceptanceList :acceptances="acceptances" /> -->
   </div>
 </template>
 
@@ -53,25 +56,28 @@ export default {
   setup() {
     const acceptances = ref([]);
     const router = useRouter();
+    const loadingTable = ref(false);
 
     const fetchAcceptances = async () => {
+      loadingTable.value = true;
       try {
         const response = await getAllAcceptances();
         console.log("respond data", response);
         acceptances.value = response;
+
+        loadingTable.value = false;
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
 
     const viewAcceptanceDetails = (acceptance) => {
-      router.push({ path: "/acceptances", params: { id: acceptance.id } });
+      router.push({ path: `/acceptances/${acceptance.id}` });
     };
 
     const updateAcceptance = (acceptance) => {
       router.push({
-        path: "/acceptances/update",
-        params: { id: acceptance.id },
+        path: `/acceptances/update/${acceptance.id}`,
       });
     };
 
@@ -94,6 +100,7 @@ export default {
 
     return {
       acceptances,
+      loadingTable,
       viewAcceptanceDetails,
       updateAcceptance,
       handleDeleteAcceptance,

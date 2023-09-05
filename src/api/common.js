@@ -38,3 +38,12 @@ export function required(value) {
 export function isNumber(value) {
   return !isNaN(value);
 }
+
+export function isFieldValid(value, validators) {
+  for (const validator of validators) {
+    if (!validator(value)) {
+      return false;
+    }
+  }
+  return true;
+}

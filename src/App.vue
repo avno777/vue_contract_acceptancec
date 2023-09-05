@@ -5,8 +5,8 @@ import { RouterLink, RouterView } from "vue-router";
 <template>
   <header>
     <div class="wrapper">
-      <div>
-        <ul>
+      <div class="">
+        <ul class="flex">
           <li>
             <RouterLink to="/">Home</RouterLink>
           </li>

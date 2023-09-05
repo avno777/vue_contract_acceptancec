@@ -1,8 +1,7 @@
 <template>
   <div>
     <h1>Create contract</h1>
-
-    <form @submit.prevent="handleCreateContract">
+    <div>
       <div>
         <label for="contract_number">Contract Number:</label>
         <input
@@ -10,13 +9,18 @@
           id="contract_number"
           v-model="formData.contract_number"
           :class="{
-            invalid: !isFieldValid(formData.contract_number, [required]),
+            valid: isContractNumberValid == true,
+            invalid: isContractNumberValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.contract_number, [required])"
+          v-if="
+            formSubmitted &&
+            !isContractNumberValid &&
+            formData.contract_number != ''
+          "
         >
           Please enter a valid contract number.
         </span>
@@ -28,13 +32,18 @@
           id="contract_name"
           v-model="formData.contract_name"
           :class="{
-            invalid: !isFieldValid(formData.contract_name, [required]),
+            valid: isContractNameValid == true,
+            invalid: isContractNameValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.contract_name, [required])"
+          v-if="
+            formSubmitted &&
+            !isContractNameValid &&
+            formData.contract_name != ''
+          "
         >
           Please enter a contract name.
         </span>
@@ -45,12 +54,15 @@
           type="date"
           id="sign_date"
           v-model="formData.sign_date"
-          :class="{ invalid: !isFieldValid(formData.sign_date, [required]) }"
+          :class="{
+            valid: isSignDateValid == true,
+            invalid: isSignDateValid == false,
+          }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.sign_date, [required])"
+          v-if="formSubmitted && !isSignDateValid && formData.sign_date != ''"
         >
           Please select a sign date.
         </span>
@@ -58,20 +70,22 @@
       <div>
         <label for="contract_value">Contract Value:</label>
         <input
-          type="number"
+          type="text"
           id="contract_value"
           v-model="formData.contract_value"
           :class="{
-            invalid: !isFieldValid(formData.contract_value, [
-              required,
-              isNumber,
-            ]),
+            valid: isContractValueValid == true,
+            invalid: isContractValueValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.contract_value, [required, isNumber])"
+          v-if="
+            formSubmitted &&
+            !isContractValueValid &&
+            formData.contract_value != ''
+          "
         >
           Please enter a valid contract value.
         </span>
@@ -82,12 +96,17 @@
           type="text"
           id="customer_id"
           v-model="formData.customer_id"
-          :class="{ invalid: !isFieldValid(formData.customer_id, [required]) }"
+          :class="{
+            valid: isCustomerIdValid == true,
+            invalid: isCustomerIdValid == false,
+          }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.customer_id, [required])"
+          v-if="
+            formSubmitted && !isCustomerIdValid && formData.customer_id != ''
+          "
         >
           Please enter a customer ID.
         </span>
@@ -95,17 +114,18 @@
       <div>
         <label for="status">Status:</label>
         <input
-          type="number"
+          type="text"
           id="status"
           v-model="formData.status"
           :class="{
-            invalid: !isFieldValid(formData.status, [required, isNumber]),
+            valid: isStatusValid == true,
+            invalid: isStatusValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.status, [required, isNumber])"
+          v-if="formSubmitted && !isStatusValid && formData.status != ''"
         >
           Please enter a status.
         </span>
@@ -118,25 +138,32 @@
           cols="30"
           rows="10"
           v-model="formData.description"
-          :class="{ invalid: !isFieldValid(formData.description, [required]) }"
+          :class="{
+            valid: isDescriptionValid == true,
+            invalid: isDescriptionValid == false,
+          }"
           required
         ></textarea>
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.description, [required])"
+          v-if="
+            formSubmitted && !isDescriptionValid && formData.description != ''
+          "
         >
           Please enter a description.
         </span>
       </div>
+      <button @click="handleCreateContract" type="submit">
+        Create Contract
+      </button>
+    </div>
 
-      <button type="submit">Create Contract</button>
-    </form>
     <RouterLink to="/contracts">Back to User List</RouterLink>
   </div>
 </template>
 
 <script>
-import { ref, reactive } from "vue";
+import { ref, computed } from "vue";
 import { createContract } from "../../api"; // Import the createUser function
 import { useRouter } from "vue-router";
 import { convertDateToTimestamp, required, isNumber } from "../../api/common";
@@ -145,7 +172,7 @@ export default {
     //ContractForm,
   },
   setup() {
-    const formData = reactive({
+    const formData = ref({
       contract_number: "",
       contract_name: "",
       sign_date: "",
@@ -156,25 +183,18 @@ export default {
     });
 
     const router = useRouter();
-
-    const isFieldValid = (value, validators) => {
-      for (const validator of validators) {
-        if (!validator(value)) {
-          return false;
-        }
-      }
-      return true;
-    };
+    const formSubmitted = ref(false);
 
     const handleCreateContract = async () => {
+      formSubmitted.value = true;
       if (
-        isFieldValid(formData.contract_number, [required, isNumber]) &&
-        isFieldValid(formData.contract_name, [required]) &&
-        isFieldValid(formData.sign_date, [required]) &&
-        isFieldValid(formData.contract_value, [required, isNumber]) &&
-        isFieldValid(formData.customer_id, [required]) &&
-        isFieldValid(formData.status, [required]) &&
-        isFieldValid(formData.description, [required])
+        isContractNumberValid.value == true &&
+        isContractNameValid.value == true &&
+        isSignDateValid.value == true &&
+        isContractValueValid.value == true &&
+        isCustomerIdValid.value == true &&
+        isStatusValid.value == true &&
+        isDescriptionValid.value == true
       ) {
         try {
           formData.value.sign_date = convertDateToTimestamp(
@@ -191,14 +211,57 @@ export default {
       }
     };
 
+    const isContractNumberValid = computed(() => {
+      return formSubmitted.value ? required(formData.contract_number) : null;
+    });
+
+    const isContractNameValid = computed(() => {
+      return formSubmitted.value ? required(formData.contract_name) : null;
+    });
+
+    const isSignDateValid = computed(() => {
+      return formSubmitted.value ? required(formData.sign_date) : null;
+    });
+
+    const isContractValueValid = computed(() => {
+      return formSubmitted.value
+        ? required(formData.contract_value) && isNumber(formData.contract_value)
+        : null;
+    });
+
+    const isCustomerIdValid = computed(() => {
+      return formSubmitted.value ? required(formData.customer_id) : null;
+    });
+
+    const isStatusValid = computed(() => {
+      return formSubmitted.value
+        ? required(formData.status) && isNumber(formData.status)
+        : null;
+    });
+
+    const isDescriptionValid = computed(() => {
+      return formSubmitted.value ? required(formData.description) : null;
+    });
+
     return {
       formData,
       handleCreateContract,
+      formSubmitted,
+      isContractNumberValid,
+      isContractNameValid,
+      isSignDateValid,
+      isContractValueValid,
+      isCustomerIdValid,
+      isStatusValid,
+      isDescriptionValid,
     };
   },
 };
 </script>
 <style>
+.valid {
+  border: 1px solid blue;
+}
 .invalid {
   border: 1px solid red;
 }

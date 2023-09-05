@@ -4,7 +4,7 @@
     <input
       v-model="searchKeyword"
       placeholder="Search by keyword"
-      @input="searchUsers"
+      @input="searchContracts"
     />
     <RouterLink to="/contracts/new">Create New Contract</RouterLink>
 
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { getAllContracts, deleteContract } from "../../api/index";
 import { convertTimestampToDate } from "../../api/common";
@@ -56,11 +56,19 @@ export default {
   },
   setup() {
     const contracts = ref([]);
+    const searchKeyword = ref("");
     const router = useRouter();
+
+    const searchContracts = () => {
+      setTimeout(fetchContracts, 1000);
+    };
+
+    watch(searchKeyword, searchContracts);
 
     const fetchContracts = async () => {
       try {
-        const response = await getAllContracts();
+        const response = await getAllContracts(searchKeyword.value);
+        console.log("keyword", searchKeyword.value);
         console.log("respond data", response);
         contracts.value = response;
       } catch (error) {
@@ -69,11 +77,13 @@ export default {
     };
 
     const viewContractDetails = (contract) => {
-      router.push({ path: "/contracts", params: { id: contract.id } });
+      router.push({
+        path: `/contracts/${contract.id}`,
+      });
     };
 
     const updateContract = (contract) => {
-      router.push({ path: "/contracts/update", params: { id: contract.id } });
+      router.push({ path: `/contracts/update/${contract.id}` });
     };
 
     const handleDeleteContract = async (contractId) => {
@@ -99,6 +109,8 @@ export default {
       updateContract,
       handleDeleteContract,
       formatTimeStamp,
+      searchKeyword,
+      searchContracts,
     };
   },
 };

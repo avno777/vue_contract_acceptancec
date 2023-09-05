@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1>Create contract</h1>
+    <h1>Create Acceptance</h1>
 
-    <form @submit.prevent="handleCreateAcceptance">
+    <div>
       <div>
         <label for="contract_id">Contract:</label>
         <input
@@ -10,15 +10,18 @@
           id="contract_id"
           v-model="formData.contract_id"
           :class="{
-            invalid: !isFieldValid(formData.contract_number, [required]),
+            valid: isContractIdValid == true,
+            invalid: isContractIdValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.contract_id, [required])"
+          v-if="
+            formSubmitted && !isContractIdValid && formData.contract_id != ''
+          "
         >
-          Please enter a contract name.
+          Please enter a valid contract number.
         </span>
       </div>
       <div>
@@ -28,52 +31,61 @@
           id="acceptance_name"
           v-model="formData.acceptance_name"
           :class="{
-            invalid: !isFieldValid(formData.acceptance_name, [required]),
+            valid: isAcceptanceNameValid == true,
+            invalid: isAcceptanceNameValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.acceptance_name, [required])"
+          v-if="
+            formSubmitted &&
+            !isAcceptanceNameValid &&
+            formData.contract_name != ''
+          "
         >
           Please enter a acceptance name.
         </span>
       </div>
+
       <div>
         <label for="acceptance_amount">Acceptance Amount:</label>
         <input
-          type="number"
+          type="text"
           id="acceptance_amount"
           v-model="formData.acceptance_amount"
           :class="{
-            invalid: !isFieldValid(formData.acceptance_amount, [
-              required,
-              isNumber,
-            ]),
+            valid: isAcceptanceAmountValid == true,
+            invalid: isAcceptanceAmountValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.acceptance_amount, [required, isNumber])"
+          v-if="
+            formSubmitted &&
+            !isAcceptanceAmountValid &&
+            formData.acceptance_amount != ''
+          "
         >
-          Please enter acceptance amount.
+          Please enter a valid acceptance amount.
         </span>
       </div>
       <div>
         <label for="volume">Volume:</label>
         <input
-          type="number"
+          type="text"
           id="volume"
           v-model="formData.volume"
           :class="{
-            invalid: !isFieldValid(formData.volume, [required, isNumber]),
+            valid: isVolumeValid == true,
+            invalid: isVolumeValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.volume, [required, isNumber])"
+          v-if="formSubmitted && !isVolumeValid && formData.volume != ''"
         >
           Please enter volume.
         </span>
@@ -81,37 +93,43 @@
       <div>
         <label for="status">Status:</label>
         <input
-          type="number"
+          type="text"
           id="status"
           v-model="formData.status"
           :class="{
-            invalid: !isFieldValid(formData.status, [required, isNumber]),
+            valid: isStatusValid == true,
+            invalid: isStatusValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.status, [required, isNumber])"
+          v-if="formSubmitted && !isStatusValid && formData.status != ''"
         >
-          Please enter status.
+          Please enter a status.
         </span>
       </div>
       <div>
         <label for="acceptance_date">Acceptance Date:</label>
         <input
           type="date"
-          id="acceptance_date"
+          id="sign_date"
           v-model="formData.acceptance_date"
           :class="{
-            invalid: !isFieldValid(formData.acceptance_date, [required]),
+            valid: isAcceptanceDateValid == true,
+            invalid: isAcceptanceDateValid == false,
           }"
           required
         />
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.acceptance_date, [required])"
+          v-if="
+            formSubmitted &&
+            !isAcceptanceDateValid &&
+            formData.acceptance_date != ''
+          "
         >
-          Please enter acceptance date.
+          Please select a sign date.
         </span>
       </div>
       <div>
@@ -123,28 +141,31 @@
           rows="10"
           v-model="formData.description"
           :class="{
-            invalid: !isFieldValid(formData.description, [required]),
+            valid: isDescriptionValid == true,
+            invalid: isDescriptionValid == false,
           }"
           required
         ></textarea>
         <span
           class="error-message"
-          v-if="!isFieldValid(formData.description, [required])"
+          v-if="
+            formSubmitted && !isDescriptionValid && formData.description != ''
+          "
         >
-          Please enter description.
+          Please enter a description.
         </span>
       </div>
-      <div>
-        <button type="submit">Create Acceptance</button>
-      </div>
-    </form>
-    <RouterLink to="/contracts">Back to User List</RouterLink>
+      <button @click="handleCreateAcceptance" type="submit">
+        Create Acceptance
+      </button>
+    </div>
+    <RouterLink to="/acceptances">Back to Acceptances List</RouterLink>
   </div>
 </template>
 
 <script>
-import { ref, reactive } from "vue";
-import { createAcceptance, createContract } from "../../api"; // Import the createUser function
+import { ref, reactive, computed } from "vue";
+import { createAcceptance } from "../../api"; // Import the createUser function
 import { useRouter } from "vue-router";
 import { convertDateToTimestamp, required, isNumber } from "../../api/common";
 export default {
@@ -163,24 +184,18 @@ export default {
     });
 
     const router = useRouter();
+    const formSubmitted = ref(false);
 
-    const isFieldValid = (value, validators) => {
-      for (const validator of validators) {
-        if (!validator(value)) {
-          return false;
-        }
-      }
-      return true;
-    };
     const handleCreateAcceptance = async () => {
+      formSubmitted.value = true;
       if (
-        isFieldValid(formData.contract_id, [required]) &&
-        isFieldValid(formData.acceptance_name, [required]) &&
-        isFieldValid(formData.acceptance_amount, [required, isNumber]) &&
-        isFieldValid(formData.volume, [required, isNumber]) &&
-        isFieldValid(formData.status, [required, isNumber]) &&
-        isFieldValid(formData.acceptance_date, [required]) &&
-        isFieldValid(formData.description, [required])
+        isContractIdValid.value == true &&
+        isAcceptanceNameValid.value == true &&
+        isAcceptanceAmountValid.value == true &&
+        isVolumeValid.value == true &&
+        isStatusValid.value == true &&
+        isAcceptanceDateValid.value == true &&
+        isDescriptionValid.value == true
       ) {
         try {
           formData.value.acceptance_date = convertDateToTimestamp(
@@ -197,9 +212,52 @@ export default {
       }
     };
 
+    const isContractIdValid = computed(() => {
+      return formSubmitted.value ? required(formData.contract_id) : null;
+    });
+
+    const isAcceptanceNameValid = computed(() => {
+      return formSubmitted.value ? required(formData.acceptance_name) : null;
+    });
+
+    const isAcceptanceAmountValid = computed(() => {
+      return formSubmitted.value
+        ? required(formData.acceptance_amount) &&
+            isNumber(formData.acceptance_amount)
+        : null;
+    });
+
+    const isVolumeValid = computed(() => {
+      return formSubmitted.value
+        ? required(formData.volume) && isNumber(formData.volume)
+        : null;
+    });
+
+    const isStatusValid = computed(() => {
+      return formSubmitted.value
+        ? required(formData.status) && isNumber(formData.status)
+        : null;
+    });
+
+    const isAcceptanceDateValid = computed(() => {
+      return formSubmitted.acceptance_date
+        ? required(formData.acceptance_date)
+        : null;
+    });
+
+    const isDescriptionValid = computed(() => {
+      return formSubmitted.value ? required(formData.description) : null;
+    });
+
     return {
       formData,
       handleCreateAcceptance,
+      isContractIdValid,
+      isAcceptanceNameValid,
+      isAcceptanceAmountValid,
+      isVolumeValid,
+      isAcceptanceDateValid,
+      isDescriptionValid,
     };
   },
 };
