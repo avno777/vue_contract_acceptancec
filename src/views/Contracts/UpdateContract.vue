@@ -1,165 +1,189 @@
 <template>
   <div>
-    <h1>Edit Contract</h1>
+    <div class="py-4 px-24">
+      <h1 class="text-2xl font-semibold mb-4">Edit Contract</h1>
+      <div class="space-y-4">
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="contract_number"
+            >Contract Number:</label
+          >
+          <input
+            type="text"
+            id="contract_number"
+            v-model="formData.contract_number"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isContractNumberValid == true,
+              invalid: isContractNumberValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted &&
+              !isContractNumberValid &&
+              formData.contract_number == ''
+            "
+          >
+            Please enter a valid contract number.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="contract_name"
+            >Contract Name:</label
+          >
+          <input
+            type="text"
+            id="contract_name"
+            v-model="formData.contract_name"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isContractNameValid == true,
+              invalid: isContractNameValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted &&
+              !isContractNameValid &&
+              formData.contract_name == ''
+            "
+          >
+            Please enter a contract name.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="sign_date">Sign Date:</label>
+          <input
+            type="date"
+            id="sign_date"
+            v-model="formattedDate"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isSignDateValid == true,
+              invalid: isSignDateValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="formSubmitted && !isSignDateValid && formData.sign_date == ''"
+          >
+            Please select a sign date.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="contract_value"
+            >Contract Value:</label
+          >
+          <input
+            type="text"
+            id="contract_value"
+            v-model="f"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isContractValueValid == true,
+              invalid: isContractValueValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted &&
+              !isContractValueValid &&
+              formData.contract_value != ''
+            "
+          >
+            Please enter a valid contract value.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="customer_id">Customer:</label>
+          <input
+            type="text"
+            id="customer_id"
+            v-model="formData.customer_id"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isCustomerIdValid == true,
+              invalid: isCustomerIdValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted && !isCustomerIdValid && formData.customer_id == ''
+            "
+          >
+            Please enter a customer ID.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="status">Status:</label>
+          <input
+            type="text"
+            id="status"
+            v-model="formData.status"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isStatusValid == true,
+              invalid: isStatusValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="formSubmitted && !isStatusValid && formData.status == ''"
+          >
+            Please enter a status.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="description"
+            >Description:</label
+          >
+          <textarea
+            name="description"
+            id="description"
+            cols="30"
+            rows="10"
+            v-model="formData.description"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isDescriptionValid == true,
+              invalid: isDescriptionValid == false,
+            }"
+            required
+          ></textarea>
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted && !isDescriptionValid && formData.description == ''
+            "
+          >
+            Please enter a description.
+          </span>
+        </div>
 
-    <div>
-      <div>
-        <label for="contract_number">Contract Number:</label>
-        <input
-          type="text"
-          id="contract_number"
-          v-model="formData.contract_number"
-          :class="{
-            valid: isContractNumberValid == true,
-            invalid: isContractNumberValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted &&
-            !isContractNumberValid &&
-            formData.contract_number != ''
-          "
+        <button
+          @click="handleUpdateContract"
+          type="submit"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full"
         >
-          Please enter a valid contract number.
-        </span>
+          Update Contract
+        </button>
       </div>
-      <div>
-        <label for="contract_name">Contract Name:</label>
-        <input
-          type="text"
-          id="contract_name"
-          v-model="formData.contract_name"
-          :class="{
-            valid: isContractNameValid == true,
-            invalid: isContractNameValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted &&
-            !isContractNameValid &&
-            formData.contract_name != ''
-          "
-        >
-          Please enter a contract name.
-        </span>
-      </div>
-      <div>
-        <label for="sign_date">Sign Date:</label>
-        <input
-          type="date"
-          id="sign_date"
-          v-model="formattedDate"
-          :class="{
-            valid: isSignDateValid == true,
-            invalid: isSignDateValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="formSubmitted && !isSignDateValid && formData.sign_date != ''"
-        >
-          Please select a sign date.
-        </span>
-      </div>
-      <div>
-        <label for="contract_value">Contract Value:</label>
-        <input
-          type="text"
-          id="contract_value"
-          v-model="f"
-          :class="{
-            valid: isContractValueValid == true,
-            invalid: isContractValueValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted &&
-            !isContractValueValid &&
-            formData.contract_value != ''
-          "
-        >
-          Please enter a valid contract value.
-        </span>
-      </div>
-      <div>
-        <label for="customer_id">Customer:</label>
-        <input
-          type="text"
-          id="customer_id"
-          v-model="formData.customer_id"
-          :class="{
-            valid: isCustomerIdValid == true,
-            invalid: isCustomerIdValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted && !isCustomerIdValid && formData.customer_id != ''
-          "
-        >
-          Please enter a customer ID.
-        </span>
-      </div>
-      <div>
-        <label for="status">Status:</label>
-        <input
-          type="text"
-          id="status"
-          v-model="formData.status"
-          :class="{
-            valid: isStatusValid == true,
-            invalid: isStatusValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="formSubmitted && !isStatusValid && formData.status != ''"
-        >
-          Please enter a status.
-        </span>
-      </div>
-      <div>
-        <label for="description">Description:</label>
-        <textarea
-          name="description"
-          id="description"
-          cols="30"
-          rows="10"
-          v-model="formData.description"
-          :class="{
-            valid: isDescriptionValid == true,
-            invalid: isDescriptionValid == false,
-          }"
-          required
-        ></textarea>
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted && !isDescriptionValid && formData.description != ''
-          "
-        >
-          Please enter a description.
-        </span>
-      </div>
-
-      <button @click="handleUpdateContract" type="submit">
-        Update Contract
-      </button>
+      <RouterLink
+        to="/contracts"
+        class="mt-4 block text-blue-500 hover:underline font-semibold"
+        >Back to Contracts List</RouterLink
+      >
     </div>
-    <RouterLink to="/contracts">Back to Contracts List</RouterLink>
   </div>
 </template>
 

@@ -1,48 +1,76 @@
 <template>
   <div>
-    <h1>Contract List</h1>
-    <input
-      v-model="searchKeyword"
-      placeholder="Search by keyword"
-      @input="searchContracts"
-    />
-    <RouterLink to="/contracts/new">Create New Contract</RouterLink>
+    <div class="px-20 pt-16">
+      <h1 class="text-3xl font-bold mb-4">Contract List</h1>
+      <input
+        class="w-[300px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-sky-500"
+        v-model="searchKeyword"
+        placeholder="Search by keyword"
+        @input="searchContracts"
+      />
+      <RouterLink
+        to="/contracts/new"
+        class="mt-4 block text-blue-500 hover:underline hover:text-blue-600 font-semibold"
+        >Create New Contract</RouterLink
+      >
 
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Contract Number</th>
-          <th>Contract Name</th>
-          <th>Sign Date</th>
-          <th>Contract Value</th>
-          <th>Customer</th>
-          <th>status</th>
-          <th>Description</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-if="loadingTable">
-          <td colspan="9">Loading</td>
-        </tr>
-        <tr v-for="contract in contracts" :key="contract.id">
-          <td>{{ contract.id }}</td>
-          <td>{{ contract.contract_number }}</td>
-          <td>{{ contract.contract_name }}</td>
-          <td>{{ formatTimeStamp(contract.sign_date) }}</td>
-          <td>{{ contract.contract_value }}</td>
-          <td>{{ contract.customer_id }}</td>
-          <td>{{ contract.status }}</td>
-          <td>{{ contract.description }}</td>
-          <td>
-            <button @click="viewContractDetails(contract)">View</button>
-            <button @click="updateContract(contract)">Edit</button>
-            <button @click="handleDeleteContract(contract.id)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <div class="py-4">
+        <table class="min-w-full border-collapse">
+          <thead class="border">
+            <tr>
+              <th class="py-2 px-4 bg-gray-100">ID</th>
+              <th class="py-2 px-4 bg-gray-100">Contract Number</th>
+              <th class="py-2 px-4 bg-gray-100">Contract Name</th>
+              <th class="py-2 px-4 bg-gray-100">Sign Date</th>
+              <th class="py-2 px-4 bg-gray-100">Contract Value</th>
+              <th class="py-2 px-4 bg-gray-100">Customer</th>
+              <th class="py-2 px-4 bg-gray-100">Status</th>
+              <th class="py-2 px-4 bg-gray-100">Description</th>
+              <th class="py-2 px-4 bg-gray-100">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="loadingTable">
+              <td colspan="9" class="py-2 px-4 text-center font-medium">
+                Loading
+              </td>
+            </tr>
+            <tr v-for="contract in contracts" :key="contract.id">
+              <td class="py-2 px-4 border">{{ contract.id }}</td>
+              <td class="py-2 px-4 border">{{ contract.contract_number }}</td>
+              <td class="py-2 px-4 border">{{ contract.contract_name }}</td>
+              <td class="py-2 px-4 border">
+                {{ formatTimeStamp(contract.sign_date) }}
+              </td>
+              <td class="py-2 px-4 border">{{ contract.contract_value }}</td>
+              <td class="py-2 px-4 border">{{ contract.customer_id }}</td>
+              <td class="py-2 px-4 border">{{ contract.status }}</td>
+              <td class="py-2 px-4 border">{{ contract.description }}</td>
+              <td class="py-2 px-4 border">
+                <button
+                  @click="viewContractDetails(contract)"
+                  class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded mb-2"
+                >
+                  View
+                </button>
+                <button
+                  @click="updateContract(contract)"
+                  class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded mb-2"
+                >
+                  Edit
+                </button>
+                <button
+                  @click="handleDeleteContract(contract.id)"
+                  class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
     <!-- <ContractList :contracts="contracts" /> -->
   </div>
 </template>
@@ -76,6 +104,7 @@ export default {
         console.log("keyword", searchKeyword.value);
         console.log("respond data", response);
         contracts.value = response;
+        loadingTable.value = false;
       } catch (error) {
         console.error("Error fetching contracts:", error);
       }
@@ -121,3 +150,4 @@ export default {
   },
 };
 </script>
+<style></style>

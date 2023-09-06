@@ -1,165 +1,189 @@
 <template>
   <div>
-    <h1>Edit Acceptance</h1>
+    <div class="py-4 px-24">
+      <h1 class="text-2xl font-semibold mb-4">Edit Acceptance</h1>
+      <div class="space-y-4">
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="contract_id">Contract:</label>
+          <input
+            type="text"
+            id="contract_id"
+            v-model="formData.contract_id"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isContractIdValid == true,
+              invalid: isContractIdValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted && !isContractIdValid && formData.contract_id != ''
+            "
+          >
+            Please enter a valid contract number.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="acceptance_name"
+            >Acceptance Name:</label
+          >
+          <input
+            type="text"
+            id="acceptance_name"
+            v-model="formData.acceptance_name"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isAcceptanceNameValid == true,
+              invalid: isAcceptanceNameValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted &&
+              !isAcceptanceNameValid &&
+              formData.contract_name != ''
+            "
+          >
+            Please enter a acceptance name.
+          </span>
+        </div>
 
-    <div>
-      <div>
-        <label for="contract_id">Contract:</label>
-        <input
-          type="text"
-          id="contract_id"
-          v-model="formData.contract_id"
-          :class="{
-            valid: isContractIdValid == true,
-            invalid: isContractIdValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted && !isContractIdValid && formData.contract_id != ''
-          "
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="acceptance_amount"
+            >Acceptance Amount:</label
+          >
+          <input
+            type="number"
+            id="acceptance_amount"
+            v-model="formData.acceptance_amount"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isAcceptanceAmountValid == true,
+              invalid: isAcceptanceAmountValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted &&
+              !isAcceptanceAmountValid &&
+              formData.acceptance_amount != ''
+            "
+          >
+            Please enter a valid acceptance amount.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="volume">Volume:</label>
+          <input
+            type="number"
+            id="volume"
+            v-model="formData.volume"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isVolumeValid == true,
+              invalid: isVolumeValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="formSubmitted && !isVolumeValid && formData.volume != ''"
+          >
+            Please enter volume.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="status">Status:</label>
+          <input
+            type="text"
+            id="status"
+            v-model="formData.status"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isStatusValid == true,
+              invalid: isStatusValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="formSubmitted && !isStatusValid && formData.status != ''"
+          >
+            Please enter a status.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="acceptance_date"
+            >Acceptance Date:</label
+          >
+          <input
+            type="date"
+            id="acceptance_date"
+            v-model="formattedDate"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isAcceptanceDateValid == true,
+              invalid: isAcceptanceDateValid == false,
+            }"
+            required
+          />
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted &&
+              !isAcceptanceDateValid &&
+              formData.acceptance_date != ''
+            "
+          >
+            Please select a sign date.
+          </span>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-semibold mb-2" for="description"
+            >Description:</label
+          >
+          <textarea
+            name="description"
+            id="description"
+            cols="30"
+            rows="10"
+            v-model="formData.description"
+            class="pl-2 py-1 border-solid border-2 border-gray-200 rounded-lg w-3/6"
+            :class="{
+              valid: isDescriptionValid == true,
+              invalid: isDescriptionValid == false,
+            }"
+            required
+          ></textarea>
+          <span
+            class="error-message"
+            v-if="
+              formSubmitted && !isDescriptionValid && formData.description != ''
+            "
+          >
+            Please enter a description.
+          </span>
+        </div>
+        <button
+          @click="handleUpdateAcceptance"
+          type="submit"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full"
         >
-          Please enter a valid contract number.
-        </span>
+          Update Acceptance
+        </button>
       </div>
-      <div>
-        <label for="acceptance_name">Acceptance Name:</label>
-        <input
-          type="text"
-          id="acceptance_name"
-          v-model="formData.acceptance_name"
-          :class="{
-            valid: isAcceptanceNameValid == true,
-            invalid: isAcceptanceNameValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted &&
-            !isAcceptanceNameValid &&
-            formData.contract_name != ''
-          "
-        >
-          Please enter a acceptance name.
-        </span>
-      </div>
-
-      <div>
-        <label for="acceptance_amount">Acceptance Amount:</label>
-        <input
-          type="number"
-          id="acceptance_amount"
-          v-model="formData.acceptance_amount"
-          :class="{
-            valid: isAcceptanceAmountValid == true,
-            invalid: isAcceptanceAmountValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted &&
-            !isAcceptanceAmountValid &&
-            formData.acceptance_amount != ''
-          "
-        >
-          Please enter a valid acceptance amount.
-        </span>
-      </div>
-      <div>
-        <label for="volume">Volume:</label>
-        <input
-          type="number"
-          id="volume"
-          v-model="formData.volume"
-          :class="{
-            valid: isVolumeValid == true,
-            invalid: isVolumeValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="formSubmitted && !isVolumeValid && formData.volume != ''"
-        >
-          Please enter volume.
-        </span>
-      </div>
-      <div>
-        <label for="status">Status:</label>
-        <input
-          type="text"
-          id="status"
-          v-model="formData.status"
-          :class="{
-            valid: isStatusValid == true,
-            invalid: isStatusValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="formSubmitted && !isStatusValid && formData.status != ''"
-        >
-          Please enter a status.
-        </span>
-      </div>
-      <div>
-        <label for="acceptance_date">Acceptance Date:</label>
-        <input
-          type="date"
-          id="acceptance_date"
-          v-model="formattedDate"
-          :class="{
-            valid: isAcceptanceDateValid == true,
-            invalid: isAcceptanceDateValid == false,
-          }"
-          required
-        />
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted &&
-            !isAcceptanceDateValid &&
-            formData.acceptance_date != ''
-          "
-        >
-          Please select a sign date.
-        </span>
-      </div>
-      <div>
-        <label for="description">Description:</label>
-        <textarea
-          name="description"
-          id="description"
-          cols="30"
-          rows="10"
-          v-model="formData.description"
-          :class="{
-            valid: isDescriptionValid == true,
-            invalid: isDescriptionValid == false,
-          }"
-          required
-        ></textarea>
-        <span
-          class="error-message"
-          v-if="
-            formSubmitted && !isDescriptionValid && formData.description != ''
-          "
-        >
-          Please enter a description.
-        </span>
-      </div>
-      <button @click="handleUpdateAcceptance" type="submit">
-        Update Acceptance
-      </button>
+      <RouterLink
+        to="/acceptances"
+        class="mt-4 block text-blue-500 hover:underline font-semibold"
+        >Back to Acceptances List</RouterLink
+      >
     </div>
-    <RouterLink to="/acceptances">Back to Acceptances List</RouterLink>
   </div>
 </template>
 

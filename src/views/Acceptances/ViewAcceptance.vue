@@ -1,56 +1,84 @@
 <template>
   <div>
-    <h1>AcceptanceList List</h1>
-    <input
-      v-model="searchKeyword"
-      placeholder="Search by keyword"
-      @input="searchAcceptances"
-    />
-    <RouterLink to="/acceptances/new">Create New Acceptance</RouterLink>
+    <div class="px-20 pt-16">
+      <h1 class="text-3xl font-bold mb-4">AcceptanceList List</h1>
+      <input
+        class="w-[300px] px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-sky-500"
+        v-model="searchKeyword"
+        placeholder="Search by keyword"
+        @input="searchAcceptances"
+      />
+      <RouterLink
+        to="/acceptances/new"
+        class="mt-4 block text-blue-500 hover:underline hover:text-blue-600 font-semibold"
+        >Create New Acceptance</RouterLink
+      >
 
-    <table border="{1}">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Contract</th>
-          <th>Acceptance Name</th>
-          <th>Acceptance Amount</th>
-          <th>Volume</th>
-          <th>Status</th>
-          <th>Acceptance Date</th>
-          <th>Description</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-if="loadingTable">
-          <td colspan="9">Loading</td>
-        </tr>
-        <tr v-else v-for="acceptance in acceptances" :key="acceptance.id">
-          <td>{{ acceptance.id }}</td>
-          <td>{{ acceptance.contract_id }}</td>
-          <td>{{ acceptance.acceptance_name }}</td>
-          <td>{{ acceptance.acceptance_amount }}</td>
-          <td>{{ acceptance.volume }}</td>
-          <td>{{ acceptance.status }}</td>
-          <td>{{ formatTimeStamp(acceptance.acceptance_date) }}</td>
-          <td>{{ acceptance.description }}</td>
-          <td>
-            <button @click="viewAcceptanceDetails(acceptance)">View</button>
-            <button @click="updateAcceptance(acceptance)">Edit</button>
-            <button @click="handleDeleteAcceptance(acceptance.id)">
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <div class="py-4">
+        <table border="{1}" class="min-w-full border-collapse">
+          <thead class="border">
+            <tr>
+              <th class="py-2 px-4 bg-gray-100">ID</th>
+              <th class="py-2 px-4 bg-gray-100">Contract</th>
+              <th class="py-2 px-4 bg-gray-100">Acceptance Name</th>
+              <th class="py-2 px-4 bg-gray-100">Acceptance Amount</th>
+              <th class="py-2 px-4 bg-gray-100">Volume</th>
+              <th class="py-2 px-4 bg-gray-100">Status</th>
+              <th class="py-2 px-4 bg-gray-100">Acceptance Date</th>
+              <th class="py-2 px-4 bg-gray-100">Description</th>
+              <th class="py-2 px-4 bg-gray-100">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="loadingTable">
+              <td colspan="9" class="py-2 px-4 text-center font-medium">
+                Loading
+              </td>
+            </tr>
+            <tr v-else v-for="acceptance in acceptances" :key="acceptance.id">
+              <td class="py-2 px-4 border">{{ acceptance.id }}</td>
+              <td class="py-2 px-4 border">{{ acceptance.contract_id }}</td>
+              <td class="py-2 px-4 border">{{ acceptance.acceptance_name }}</td>
+              <td class="py-2 px-4 border">
+                {{ acceptance.acceptance_amount }}
+              </td>
+              <td class="py-2 px-4 border">{{ acceptance.volume }}</td>
+              <td class="py-2 px-4 border">{{ acceptance.status }}</td>
+              <td class="py-2 px-4 border">
+                {{ formatTimeStamp(acceptance.acceptance_date) }}
+              </td>
+              <td class="py-2 px-4 border">{{ acceptance.description }}</td>
+              <td class="py-2 px-4 border">
+                <button
+                  @click="viewAcceptanceDetails(acceptance)"
+                  class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded mb-2"
+                >
+                  View
+                </button>
+                <button
+                  @click="updateAcceptance(acceptance)"
+                  class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded mb-2"
+                >
+                  Edit
+                </button>
+                <button
+                  @click="handleDeleteAcceptance(acceptance.id)"
+                  class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
     <!-- <AcceptanceList :acceptances="acceptances" /> -->
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { getAllAcceptances, deleteAcceptance } from "../../api";
 
 import { useRouter } from "vue-router";
@@ -75,7 +103,8 @@ export default {
     const fetchAcceptances = async () => {
       loadingTable.value = true;
       try {
-        const response = await getAllAcceptances();
+        const response = await getAllAcceptances(searchKeyword.value);
+        console.log("keyword", searchKeyword.value);
         console.log("respond data", response);
         acceptances.value = response;
 
