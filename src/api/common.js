@@ -1,10 +1,49 @@
-export const formatTimestampToDate = (timestamp) => {
-  const date = new Date(timestamp * 1000); // Convert timestamp to milliseconds
+export const convertTimestampToDate = (timestamp) => {
+  const date = new Date(timestamp * 1000);
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
+  const month = months[date.getMonth()];
   const day = String(date.getDate()).padStart(2, "0");
 
-  // You can adjust the format as needed (e.g., 'yyyy-mm-dd')
-  const formattedDate = `${year}-${month}-${day}`;
+  const formattedDate = `${month},${day},${year}`;
   return formattedDate;
 };
+
+export const convertDateToTimestamp = (dateString) => {
+  const timestamp = Date.parse(dateString);
+  if (!isNaN(timestamp)) {
+    return Math.floor(timestamp / 1000);
+  } else {
+    return null;
+  }
+};
+
+export function required(value) {
+  return !!value;
+}
+
+export function isNumber(value) {
+  return !isNaN(value);
+}
+
+export function isFieldValid(value, validators) {
+  for (const validator of validators) {
+    if (!validator(value)) {
+      return false;
+    }
+  }
+  return true;
+}

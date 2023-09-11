@@ -37,22 +37,22 @@
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { deleteContract } from "../api";
-import { formatTimestampToDate } from "../api/common";
+import { convertTimestampToDate } from "../api/common";
 
 export default {
   props: {
     contracts: Array,
   },
-  setup(props, { emit }) {
+  setup(props) {
     const contracts = ref(props.contracts);
     const router = useRouter();
 
     const viewContractDetails = (contract) => {
-      router.push({ name: "detail contract", params: { id: contract.id } });
+      router.push({ path: "/contracts", params: { id: contract.id } });
     };
 
     const updateContract = (contract) => {
-      router.push({ name: "update contract", params: { id: contract.id } });
+      router.push({ path: "/contracts/update", params: { id: contract.id } });
     };
 
     const handleDeleteContract = async (contractId) => {
@@ -67,7 +67,7 @@ export default {
     };
 
     const formatTimeStamp = (timestamp) => {
-      return formatTimestampToDate(timestamp);
+      return convertTimestampToDate(timestamp);
     };
 
     watch(

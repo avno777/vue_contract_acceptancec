@@ -5,6 +5,9 @@ import ContractNew from "../views/Contracts/NewContract.vue";
 import ContractDetail from "../views/Contracts/DetailContract.vue";
 import ContractUpdate from "../views/Contracts/UpdateContract.vue";
 import AcceptanceView from "../views/Acceptances/ViewAcceptance.vue";
+import AcceptanceNew from "../views/Acceptances/NewAcceptance.vue";
+import AcceptanceDetail from "../views/Acceptances/DetailAcceptance.vue";
+import AcceptanceUpdate from "../views/Acceptances/UpdateAcceptance.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -44,6 +47,23 @@ const router = createRouter({
       path: "/acceptances",
       name: "acceptances",
       component: AcceptanceView,
+    },
+    {
+      path: "/acceptances/new",
+      name: "new acceptance",
+      component: AcceptanceNew,
+    },
+    {
+      path: "/acceptances/:id",
+      name: "detail acceptance",
+      component: AcceptanceDetail,
+      props: true,
+    },
+    {
+      path: "/acceptances/update/:id",
+      name: "update acceptance",
+      component: AcceptanceUpdate,
+      props: true,
     },
   ],
 });
